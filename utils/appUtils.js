@@ -13,6 +13,12 @@ dotenv.config();
 //   fs.mkdirSync(dir, { recursive: true });
 // }
 
+// Ensure /tmp/uploads directory exists at runtime
+const dir = "/tmp/uploads";
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir, { recursive: true });
+}
+
 const errorHandler = (errOrMsg, statusCode = 500) => {
   if (typeof errOrMsg === "string") {
     const error = new Error(errOrMsg);
@@ -32,7 +38,7 @@ const errorHandler = (errOrMsg, statusCode = 500) => {
 
 const storage = multer.diskStorage({
   // destination: dir,
-  destination: "public/uploads",
+  destination: dir,
 
   filename: (req, file, cb) => {
     const timestamp = moment().unix(); // Current time in seconds
