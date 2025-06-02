@@ -8,10 +8,10 @@ import fs from "fs";
 dotenv.config();
 
 // Ensure upload directory exists
-const dir = "public/uploads";
-if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir, { recursive: true });
-}
+// const dir = "public/uploads";
+// if (!fs.existsSync(dir)) {
+//   fs.mkdirSync(dir, { recursive: true });
+// }
 
 const errorHandler = (errOrMsg, statusCode = 500) => {
   if (typeof errOrMsg === "string") {
@@ -31,7 +31,8 @@ const errorHandler = (errOrMsg, statusCode = 500) => {
 };
 
 const storage = multer.diskStorage({
-  destination: dir,
+  // destination: dir,
+  destination: "public/uploads",
 
   filename: (req, file, cb) => {
     const timestamp = moment().unix(); // Current time in seconds
