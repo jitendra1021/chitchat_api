@@ -11,7 +11,8 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000', // change to your actual backend base URL
+        url: 'https://chitchat-api-ebon.vercel.app', // change to your actual backend base URL
+        // url: 'http://localhost:3000', // change to your actual backend base URL
       },
     ],
      components: {

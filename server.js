@@ -4,10 +4,12 @@ import authRouter from './router/authRouter.js';
 import connectDB from './db/connectDB.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './doc/swagger.js'; // or .ts
+import cors from 'cors'
 
 
 const app = express();
 app.use(express.json()); 
+app.use(cors());
 
 dotenv.config();
 
@@ -35,6 +37,6 @@ const PORT = process.env?.PORT || 3000
 connectDB().then( () =>{
     app.listen(PORT, () =>{
         console.log(`Server is running on port ${PORT}`);
-        console.log(`📚 Swagger Docs: http://localhost:${PORT}/api-docs`);
+        console.log(`https://chitchat-api-ebon.vercel.app/api-docs`);
     } )
 } )

@@ -214,7 +214,6 @@ const loginHandler = async (req, res, next) => {
 const userDetailHandler = async(req, res, next) => {
     try {
         const userId = req.user?._id;
-        console.log(userId,"????")
 
         if(! userId ){
             return next(appUtils.handleError("Unauthorized: User not logged in", 401));
@@ -223,7 +222,7 @@ const userDetailHandler = async(req, res, next) => {
         const data = await UserModel.findById(userId).select("-password");
         
         if( ! data ) {
-            return next (appUtils.handleError("User not found", 401));
+            return next (appUtils.handleError("Token is required or User not found", 401));
         }
 
         return res.status(200).json( { message: "User details fetched successfully", data: data } )
