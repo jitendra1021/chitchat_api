@@ -64,21 +64,41 @@ const upload = multer({
 }).single("profile_pic");
 
 // Wrapper middleware to catch file size error or other error
-const uploadWithErrorHandling = (req, res, next) => {
-  upload(req, res, (err) => {
-    if (err) {
-      if (err.code === "LIMIT_FILE_SIZE") {
-        return next(new Error("File too large. Max size allowed is 6MB."));
+// const uploadWithErrorHandling = (req, res, next) => {
+//   upload(req, res, (err) => {
+//     if (err) {
+//       if (err.code === "LIMIT_FILE_SIZE") {
+//         return next(new Error("File too large. Max size allowed is 6MB."));
+//       }
+//       return next(err);
+//     }
+
+//     if (!req?.file) {
+//       return next(new Error("No file uploaded. Please upload profile pic"));
+//     }
+
+//     next();
+//   });
+// };
+const uploadWithErrorHandling = (isRequired = true) => {
+  return (req, res, next) => {
+    upload(req, res, (err) => {
+      if (err) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+          return next(new Error("File too large. Max size allowed is 6MB."));
+        }
+        return next(err);
       }
-      return next(err);
-    }
 
-    if (!req?.file) {
-      return next(new Error("No file uploaded. Please upload profile pic"));
-    }
+      // If file is required but missing
+      if (isRequired && !req?.file) {
+        return next(new Error("No file uploaded. Please upload profile pic."));
+      }
 
-    next();
-  });
+      // If optional, no error even if no file
+      next();
+    });
+  };
 };
 
 const appUtils = {

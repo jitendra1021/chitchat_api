@@ -1,5 +1,5 @@
 import express from "express";
-import {  loginHandler, registerHandler, resendOTPHandler, sendOTPHandler, userDetailHandler, verifyOTPHandler } from "../controller/authController.js";
+import {  changePasHandler, forgotPasHandler, loginHandler, refreshTokenHandler, registerHandler, resendOTPHandler, resetPasHandler, sendOTPHandler, updateProfileHandler, userDetailHandler, verifyOTPHandler } from "../controller/authController.js";
 import appUtils from "../utils/appUtils.js";
 import authenticate from "../utils/authenticate.js";
 
@@ -40,7 +40,7 @@ const authRouter = express.Router();
  *         description: User registered successfully
  */
 
-authRouter.post("/register", appUtils?.uploadFile, registerHandler);
+authRouter.post("/register", appUtils?.uploadFile(true), registerHandler);
 
 /**
  * @swagger
@@ -168,6 +168,196 @@ authRouter.post("/login", loginHandler);
  */
 authRouter.get("/user/details",authenticate, userDetailHandler);
 
+/**
+ * @swagger
+ * /auth/user/update_profile:
+ *   patch:
+ *     tags:
+ *       - Auth
+ *     summary: Update authenticated user's profile
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *                 format: email
+ *               gender:
+ *                 type: string
+ *               profile_pic:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Successfully updated user profile
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
+authRouter.patch("/user/update_profile", authenticate, appUtils?.uploadFile(false),  updateProfileHandler );
+
+/**
+ * @swagger
+ * /auth/refresh_token:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Refresh user's token
+ *     description: Provide a valid refresh token to get a new access token.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               refresh_token:
+ *                 type: string
+ *                 example: your-refresh-token
+ *     responses:
+ *       200:
+ *         description: New access token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized
+ *       400:
+ *         description: Invalid or expired refresh token
+ *       500:
+ *         description: Internal server error
+ */
+authRouter.post("/refresh_token", refreshTokenHandler );
+
+/**
+ * @swagger
+ * /auth/forgot_password:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Request a password reset
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User's email address
+ *     responses:
+ *       200:
+ *         description: Password reset link sent successfully
+ *       400:
+ *         description: Missing or invalid email
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+
+authRouter.post('/forgot_password',  forgotPasHandler );
+
+/**
+ * @swagger
+ * /auth/reset_password:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Reset user's password
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - otp
+ *               - newPassword
+ *               - email
+ *             properties:
+ *               otp:
+ *                 type: number
+ *                 description: One-time password (OTP) for resetting the password
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 6
+ *                 description: The new password to set
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Email associated with the account
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *       400:
+ *         description: Missing or invalid OTP, email, or new password
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+
+authRouter.post('/reset_password', resetPasHandler );
+
+/**
+ * @swagger
+ * /auth/change_password:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Change user's password
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 format: password
+ *                 description: The user's current password
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 6
+ *                 description: The new password to set
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *       400:
+ *         description: Missing or invalid old password or new password
+ *       401:
+ *         description: Unauthorized or invalid old password
+ *       500:
+ *         description: Internal server error
+ */
+authRouter.post('/change_password', authenticate, changePasHandler  )
 
 
 export default authRouter;
