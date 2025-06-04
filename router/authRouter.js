@@ -357,7 +357,7 @@ authRouter.post('/reset_password', resetPasHandler );
  *       500:
  *         description: Internal server error
  */
-authRouter.post('/change_password', authenticate, changePasHandler  )
+authRouter.post('/change_password', authenticate, changePasHandler );
 
 
 export default authRouter;

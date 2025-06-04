@@ -44,7 +44,7 @@ const verifyOTPHandler = async (req, res, next) => {
         } 
         
     } catch (error) {
-        return next (appUtils.handleError("Failed to verify OTP", 400))
+        return next (appUtils.handleError(`Failed to verify OTP ${error?.message} `, 400))
     }
 };
 
@@ -124,7 +124,7 @@ const registerHandler = async (req, res, next) => {
 
 const sendOTPHandler = async(req, res, next) => {
     try {
-        const { email } = req.body;
+        const email  = req.body?.email ??"";
         if(!email.trim() || email.trim() === "") return next( appUtils?.handleError("Email is required", 400) );
         if (!validation?.isEmailValid(email)) return next(appUtils?.handleError("Please provide a valid email address", 400));
 
@@ -153,7 +153,7 @@ const sendOTPHandler = async(req, res, next) => {
 
 const resendOTPHandler = async(req, res, next) => {
     try {
-        const { email } = req.body;
+        const email = req.body?.email ?? "";
         if(!email.trim() || email.trim() === "") return next( appUtils?.handleError("Email is required", 400) );
         if (!validation?.isEmailValid(email)) return next(appUtils?.handleError("Please provide a valid email address", 400));
 
@@ -285,14 +285,14 @@ const updateProfileHandler = async (req, res, next ) =>{
 
     } catch (error) {
         console.error(error);
-        return next( appUtils?.handleError("Internal server error", 500) )
+        return next( appUtils?.handleError(`Failed to update profile ${error?.message}`, 500) )
     }
     
 }
 
 const refreshTokenHandler = async (req, res, next) => {
     try {
-        const { refresh_token } = req.body;
+        const refresh_token = req.body?.refresh_token ??"";
 
         if (!refresh_token?.trim()) {
             return next(appUtils.handleError("refresh_token is required", 400));
@@ -314,13 +314,13 @@ const refreshTokenHandler = async (req, res, next) => {
         }
 
     } catch (error) {
-        return next(appUtils.handleError("Invalid or expired refresh token. Login to get a new one", 400));
+        return next(appUtils.handleError(`Error: ${error?.message}`, 400));
     }
 }
 
 const forgotPasHandler = async (req, res, next ) =>{
     try {
-        const { email } = req.body;
+        const email  = req.body?.email ?? "";
         const trimedEmail = email?.trim()?.toLowerCase();
 
         if(!trimedEmail || validation.isEmailValid(trimedEmail) ) {
@@ -348,7 +348,7 @@ const forgotPasHandler = async (req, res, next ) =>{
 
     } catch (error) {
         console.log(error)
-        return next( appUtils.handleError("Internal server error", 400) )
+        return next( appUtils.handleError(`Internal server error ${error?.message}`, 400) )
     }
 }
 
@@ -411,7 +411,7 @@ const resetPasHandler = async ( req, res, next ) => {
       
     } catch (error) {
         console.log(error);
-        return next ( appUtils.handleError("Internal server error", 500) )
+        return next ( appUtils.handleError(`Error: ${error?.message}`, 500) )
     }
 }
 
@@ -458,7 +458,7 @@ const changePasHandler = async (req, res, next) =>{
 
     } catch (error) {
         console.log(error);
-        return next ( appUtils.handleError("Internal server error", 500) )
+        return next ( appUtils.handleError(`Internal server error ${error?.message}`, 500) )
     }
 }
 
