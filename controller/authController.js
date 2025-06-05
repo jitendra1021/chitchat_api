@@ -462,6 +462,24 @@ const changePasHandler = async (req, res, next) =>{
     }
 }
 
+const uploadMediaHandler = async (req, res, next) => {
+    try {
+        const mediaData = req.file?? null;
+        
+        if(!mediaData) {
+            return next( appUtils.handleError("Media is required", 400) )
+        }
+
+        const uploadedFileUrl = await uploadOnCloudinary(mediaData?.path);
+
+        return res.status(200).json({ message:"Media uploaded successfully", data: uploadedFileUrl })
+
+    } catch (error) {
+        console.log(error);
+        return next( appUtils.handleError(`Error:${error?.message}`, 500) )
+    }
+}
+
 
 export { 
     registerHandler, 
@@ -474,5 +492,6 @@ export {
     refreshTokenHandler,
     forgotPasHandler,
     resetPasHandler,
-    changePasHandler
+    changePasHandler,
+    uploadMediaHandler
 }

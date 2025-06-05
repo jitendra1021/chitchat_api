@@ -1,5 +1,5 @@
 import express from "express";
-import {  changePasHandler, forgotPasHandler, loginHandler, refreshTokenHandler, registerHandler, resendOTPHandler, resetPasHandler, sendOTPHandler, updateProfileHandler, userDetailHandler, verifyOTPHandler } from "../controller/authController.js";
+import {  changePasHandler, forgotPasHandler, loginHandler, refreshTokenHandler, registerHandler, resendOTPHandler, resetPasHandler, sendOTPHandler, updateProfileHandler, uploadMediaHandler, userDetailHandler, verifyOTPHandler } from "../controller/authController.js";
 import appUtils from "../utils/appUtils.js";
 import authenticate from "../utils/authenticate.js";
 
@@ -358,6 +358,8 @@ authRouter.post('/reset_password', resetPasHandler );
  *         description: Internal server error
  */
 authRouter.post('/change_password', authenticate, changePasHandler );
+
+authRouter.post ('/upload_media', appUtils?.uploadFile(true), uploadMediaHandler )
 
 
 export default authRouter;
