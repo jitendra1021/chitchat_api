@@ -18,4 +18,30 @@ const uploadOnCloudinary = async(localFilePath) =>{
     }
 }
 
-export default uploadOnCloudinary;
+
+const uploadMultipleToCloudinary = async (files) => {
+  const results = [];
+
+  for (const file of files) {
+    try {
+      const response = await cloudinary.uploader.upload(file.path, { resource_type: "auto" });
+      // results.push({ url: response.secure_url, type: file.mimetype });
+      results.push({ success: true, url: response.secure_url, type: file.mimetype });
+    } catch (error) {
+      results.push({ success: false, file: file.originalname, error: `Failed to upload` });
+    } finally {
+      // Delete local file regardless of success/failure
+      fs.unlink(file.path, (err) => {
+        if (err) console.error(`Failed to delete file: ${file.path}`, err);
+      });
+    }
+  }
+
+  return results;
+};
+
+
+
+
+
+export { uploadOnCloudinary, uploadMultipleToCloudinary } ;

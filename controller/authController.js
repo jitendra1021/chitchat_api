@@ -1,7 +1,7 @@
 import { OtpModel, UserModel } from '../model/authModel.js';
 import bcrypt from 'bcryptjs';
 import appUtils from '../utils/appUtils.js';
-import uploadOnCloudinary from '../utils/cloudinary.js';
+import {uploadMultipleToCloudinary, uploadOnCloudinary} from '../utils/cloudinary.js';
 import validation from '../utils/validation.js';
 import sendEmail from '../utils/nodemailer.js';
 import jwt from 'jsonwebtoken';
@@ -480,6 +480,27 @@ const uploadMediaHandler = async (req, res, next) => {
     }
 }
 
+const uploadMultipleMediaHandler = async (req, res, next) => {
+  try {
+    const files = req?.files;
+
+    if (!files || files?.length === 0) {
+      return next(appUtils.handleError("No media files uploaded", 400));
+    }
+
+    const uploadedResults = await uploadMultipleToCloudinary(files);
+
+    return res.status(200).json({
+      success: true,
+      message: "Media uploaded successfully",
+      data: uploadedResults,
+    });
+  } catch (error) {
+    console.error(error);
+    return next(appUtils.handleError(`Error: ${error?.message}`, 500));
+  }
+};
+
 
 export { 
     registerHandler, 
@@ -493,5 +514,6 @@ export {
     forgotPasHandler,
     resetPasHandler,
     changePasHandler,
-    uploadMediaHandler
+    uploadMediaHandler,
+    uploadMultipleMediaHandler
 }
