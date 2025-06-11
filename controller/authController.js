@@ -491,7 +491,6 @@ const uploadMultipleMediaHandler = async (req, res, next) => {
     const uploadedResults = await uploadMultipleToCloudinary(files);
 
     return res.status(200).json({
-      success: true,
       message: "Media uploaded successfully",
       uploadedResults,
     });
