@@ -1,5 +1,5 @@
 import express from "express";
-import {  changePasHandler, forgotPasHandler, loginHandler, refreshTokenHandler, registerHandler, resendOTPHandler, resetPasHandler, sendOTPHandler, updateProfileHandler, uploadMediaHandler, uploadMultipleMediaHandler, userDetailHandler, verifyOTPHandler } from "../controller/authController.js";
+import {  changePasHandler, forgotPasHandler, loginHandler, refreshTokenHandler, registerHandler, resendOTPHandler, resetPasHandler, saveFCMTokenHandler, sendOTPHandler, updateProfileHandler, uploadMediaHandler, uploadMultipleMediaHandler, userDetailHandler, verifyOTPHandler } from "../controller/authController.js";
 import appUtils from "../utils/appUtils.js";
 import authenticate from "../utils/authenticate.js";
 import uploadAnyFiles from "../utils/uploadAnyFiles.js";
@@ -362,6 +362,8 @@ authRouter.post('/change_password', authenticate, changePasHandler );
 
 authRouter.post ('/upload_media', appUtils?.uploadFile(true), uploadMediaHandler )
 
-authRouter.post ('/upload_multiple_files', uploadAnyFiles(true) , uploadMultipleMediaHandler )
+authRouter.post ('/upload_multiple_files', uploadAnyFiles(true) , uploadMultipleMediaHandler );
+
+authRouter.post('/save_FCM_Token', saveFCMTokenHandler );
 
 export default authRouter;

@@ -38,7 +38,12 @@ const registerUserSchema = new mongoose.Schema({
     isEmailVerified: {
         type: Boolean,
         default: false
-    }
+    },
+    FCM_token: {
+        type: String,
+        trim: true,
+        default: null,
+    },
 }, {
     timestamps: true
 });

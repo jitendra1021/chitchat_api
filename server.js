@@ -5,6 +5,7 @@ import connectDB from './db/connectDB.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './doc/swagger.js'; // or .ts
 import cors from 'cors'
+import notifRouter from './router/notifRouter.js';
 
 
 const app = express();
@@ -19,6 +20,7 @@ app.get( '/', (req, res)=>{
 } )
 
 app.use('/auth', authRouter);                                            // api url: http://localhost:3000/auth/register
+app.use('/notification', notifRouter)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));     //swagger link:- http://localhost:${PORT}/api-docs
 
 

@@ -493,13 +493,46 @@ const uploadMultipleMediaHandler = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "Media uploaded successfully",
-      data: uploadedResults,
+      uploadedResults,
     });
   } catch (error) {
     console.error(error);
     return next(appUtils.handleError(`Error: ${error?.message}`, 500));
   }
 };
+
+const saveFCMTokenHandler = async (req, res, next) => {
+    try {
+        const userId = req.body.userId??"";
+        const FCM_token = req.body.fcmToken??"";
+
+        if(! userId?.trim()) {
+            return next(appUtils.handleError("User ID is required", 400));
+        }
+        if(! FCM_token?.trim()) {
+            return next(appUtils.handleError("FCM token is required", 400));
+        }
+
+        const userData = await UserModel.findById(userId);
+
+        if(!userData) {
+            return next(appUtils.handleError("User not found", 400));
+        }
+
+        // Save or update the FCM token
+        userData.FCM_token = FCM_token;
+        await userData.save();
+
+        return res.status(200).json({
+        success: true,
+        message: "FCM token saved successfully",
+        });
+
+    } catch (error) {
+        console.log("Error in saving the FCM Token", error);
+        return next(appUtils.handleError(`Error in saving FCM token ${error}`, 500));
+    }
+}
 
 
 export { 
@@ -515,5 +548,6 @@ export {
     resetPasHandler,
     changePasHandler,
     uploadMediaHandler,
-    uploadMultipleMediaHandler
+    uploadMultipleMediaHandler,
+    saveFCMTokenHandler
 }
